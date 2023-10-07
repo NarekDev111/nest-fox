@@ -1,0 +1,64 @@
+{
+    "name": "fox-game-backend",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/fox-game-backend/src",
+    "projectType": "application",
+    "targets": {
+        "build": {
+            "executor": "@nx/webpack:webpack",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "target": "node",
+                "compiler": "tsc",
+                "outputPath": "dist/apps/fox-game-backend",
+                "main": "apps/fox-game-backend/src/main.ts",
+                "tsConfig": "apps/fox-game-backend/tsconfig.app.json",
+                "assets": ["apps/fox-game-backend/src/assets"],
+                "isolatedConfig": true,
+                "webpackConfig": "apps/fox-game-backend/webpack.config.js"
+            },
+            "configurations": {
+                "development": {},
+                "production": {}
+            }
+        },
+        "serve": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "fox-game-backend:build"
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "fox-game-backend:build:development"
+                },
+                "production": {
+                    "buildTarget": "fox-game-backend:build:production"
+                }
+            }
+        },
+        "lint": {
+            "executor": "@nx/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["apps/fox-game-backend/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "apps/fox-game-backend/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
+        }
+    },
+    "tags": []
+}

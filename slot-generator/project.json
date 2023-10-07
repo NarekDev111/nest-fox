@@ -1,0 +1,88 @@
+{
+    "name": "slot-generator",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/slot-generator/src",
+    "projectType": "application",
+    "targets": {
+        "build-fox": {
+            "executor": "@nrwl/webpack:webpack",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "options": {
+                "target": "node",
+                "compiler": "tsc",
+                "outputPath": "dist/apps/slot-generator",
+                "main": "apps/slot-generator/src/main.ts",
+                "tsConfig": "apps/slot-generator/tsconfig.app.json",
+                "assets": [
+                    "apps/slot-generator/src/assets"
+                ],
+                "isolatedConfig": true,
+                "webpackConfig": "apps/slot-generator/webpack.config.js"
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "extractLicenses": true,
+                    "inspect": false
+                }
+            },
+            "dependsOn": [
+                {
+                    "projects": "dependencies",
+                    "target": "gen-fox-client"
+                }
+            ]
+        },
+        "serve": {
+            "executor": "@nrwl/js:node",
+            "options": {
+                "buildTarget": "slot-generator:build"
+            },
+            "configurations": {
+                "production": {
+                    "buildTarget": "slot-generator:build:production"
+                }
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": [
+                "{options.outputFile}"
+            ],
+            "options": {
+                "lintFilePatterns": [
+                    "apps/slot-generator/**/*.ts"
+                ]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+            ],
+            "options": {
+                "jestConfig": "apps/slot-generator/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
+        },
+        "docker-build": {
+            "dependsOn": [
+                {
+                    "projects": "dependencies",
+                    "target": "gen-fox-client"
+                },
+                "build-fox"
+            ],
+            "command": "docker build -f apps/slot-generator/Dockerfile --cache-from europe-west6-docker.pkg.dev/foxtrail-ch/apps/slot-generator:latest -t slot-generator ."
+        }
+    },
+    "tags": []
+}

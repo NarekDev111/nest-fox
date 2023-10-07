@@ -1,0 +1,146 @@
+query GetFullTrail($id: String! = "TEST", $language: String! = "en-US") {
+    trails(filter: { identifier: { _eq: $id } }) {
+        # General_Section
+        identifier
+
+        # trail.trail_locations
+        event_location(sort: ["sort"]) {
+            uuid
+
+            # event_location.screens_group
+            screens(sort: ["sort"]) {
+                item {
+                    ...screenFragment
+                }
+            }
+            team_tasks(sort: ["sort"]) {
+                item {
+                    ...screenFragment
+                }
+            }
+
+            # event_location.location_information_group
+            translations_2(
+                filter: { languages_code: { code: { _eq: $language } } }
+            ) {
+                name
+                find_text
+            }
+
+            # event_location.location_note
+            translations_1(
+                filter: { languages_code: { code: { _eq: $language } } }
+            ) {
+                note_title
+                note_description
+            }
+        }
+
+        # trail.starting_information
+        translations_5(filter: { languages_code: { code: { _eq: $language } } }) {
+            startlocation_name
+            startlocation_address
+        }
+
+        # trail.after_trail_section
+        translations_4(filter: { languages_code: { code: { _eq: $language } } }) {
+            find_back
+        }
+
+        # trail.trail_overview_section
+        translations_3(filter: { languages_code: { code: { _eq: $language } } }) {
+            short_description
+            city_description
+            city_name_suffix
+            notes
+        }
+    }
+}
+
+fragment screenFragment on event_location_screens_item_union {
+    __typename
+    ... on info_screen {
+        identifier
+        translations(filter: { languages_code: { code: { _eq: $language } } }) {
+            title
+            description
+        }
+    }
+
+    ... on single_choice_quiz {
+        identifier
+        translations_2(filter: { languages_code: { code: { _eq: $language } } }) {
+            question
+            hint
+        }
+        answers(sort: ["sort"]) {
+            __typename
+            id
+            correct
+            translations(filter: { languages_code: { code: { _eq: $language } } }) {
+                __typename
+                answer
+            }
+        }
+        translations(filter: { languages_code: { code: { _eq: $language } } }) {
+            explanation
+        }
+    }
+    ... on image_choice_quiz {
+        identifier
+        translations(filter: { languages_code: { code: { _eq: $language } } }) {
+            question
+            hint
+        }
+        translations_2(filter: { languages_code: { code: { _eq: $language } } }) {
+            explanation
+        }
+    }
+    ... on crossword {
+        identifier
+        translations(filter: { languages_code: { code: { _eq: $language } } }) {
+            question
+            hint
+        }
+        translations_4(filter: { languages_code: { code: { _eq: $language } } }) {
+            solution
+        }
+        translations_3(filter: { languages_code: { code: { _eq: $language } } }) {
+            explanation
+        }
+    }
+    ... on estimation_slider_screen {
+        identifier
+        translations_1(filter: { languages_code: { code: { _eq: $language } } }) {
+            question
+            hint
+        }
+        translations_3(filter: { languages_code: { code: { _eq: $language } } }) {
+            explanation
+        }
+    }
+    ... on photo_challenge {
+        identifier
+        translations(filter: { languages_code: { code: { _eq: $language } } }) {
+            description
+        }
+    }
+    ... on sort_quiz {
+        identifier
+        translations(filter: { languages_code: { code: { _eq: $language } } }) {
+            question
+            hint
+        }
+        answers(sort: ["sort"]) {
+            id
+            translations_1(
+                filter: { languages_code: { code: { _eq: $language } } }
+            ) {
+                answer
+            }
+        }
+        translations_1(filter: { languages_code: { code: { _eq: $language } } }) {
+            explanation
+        }
+    }
+}

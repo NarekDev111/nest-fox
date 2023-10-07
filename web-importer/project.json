@@ -1,0 +1,110 @@
+{
+    "name": "web-importer",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/web-importer/src",
+    "projectType": "application",
+    "targets": {
+        "build-fox": {
+            "executor": "@nrwl/webpack:webpack",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "target": "node",
+                "compiler": "tsc",
+                "outputPath": "dist/apps/web-importer",
+                "main": "apps/web-importer/src/main.ts",
+                "tsConfig": "apps/web-importer/tsconfig.app.json",
+                "assets": ["apps/web-importer/src/assets"],
+                "isolatedConfig": true,
+                "webpackConfig": "apps/web-importer/webpack.config.js"
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "extractLicenses": true,
+                    "inspect": false
+                }
+            },
+            "dependsOn": [
+                {
+                    "projects": "dependencies",
+                    "target": "gen-fox-client"
+                }
+            ]
+        },
+        "build-exp": {
+            "executor": "@nrwl/webpack:webpack",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "target": "node",
+                "compiler": "tsc",
+                "outputPath": "dist/apps/web-importer",
+                "main": "apps/web-importer/src/main.ts",
+                "tsConfig": "apps/web-importer/tsconfig.app.json",
+                "assets": ["apps/web-importer/src/assets"],
+                "isolatedConfig": true,
+                "webpackConfig": "apps/web-importer/webpack.config.js"
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "extractLicenses": true,
+                    "inspect": false
+                }
+            },
+            "dependsOn": [
+                {
+                    "projects": "dependencies",
+                    "target": "gen-exp-client"
+                }
+            ]
+        },
+        "serve-fox": {
+            "executor": "@nrwl/js:node",
+            "options": {
+                "buildTarget": "web-importer:build-fox"
+            },
+            "configurations": {
+                "production": {
+                    "buildTarget": "web-importer:build-fox:production"
+                }
+            }
+        },
+        "serve-exp": {
+            "executor": "@nrwl/js:node",
+            "options": {
+                "buildTarget": "web-importer:build-exp"
+            },
+            "configurations": {
+                "production": {
+                    "buildTarget": "web-importer:build-exp:production"
+                }
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["apps/web-importer/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "apps/web-importer/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
+        },
+        "docker-build": {
+            "dependsOn": ["build"],
+            "command": "docker build -f apps/web-importer/Dockerfile --cache-from europe-west6-docker.pkg.dev/foxtrail-ch/apps/web-importer:latest -t web-importer ."
+        }
+    },
+    "tags": []
+}

@@ -1,0 +1,85 @@
+{
+    "name": "shop-api",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/shop-api/src",
+    "projectType": "application",
+    "targets": {
+        "build-fox": {
+            "executor": "@nrwl/webpack:webpack",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "options": {
+                "target": "node",
+                "compiler": "tsc",
+                "outputPath": "dist/apps/shop-api",
+                "main": "apps/shop-api/src/main.ts",
+                "tsConfig": "apps/shop-api/tsconfig.app.json",
+                "assets": [
+                    "apps/shop-api/src/assets"
+                ],
+                "isolatedConfig": true,
+                "webpackConfig": "apps/shop-api/webpack.config.js"
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "extractLicenses": true,
+                    "inspect": false
+                }
+            },
+            "dependsOn": [
+                {
+                    "projects": "dependencies",
+                    "target": "gen-fox-client"
+                }
+            ]
+        },
+        "serve": {
+            "executor": "@nrwl/js:node",
+            "options": {
+                "buildTarget": "shop-api:build",
+                "inspect": true
+            },
+            "configurations": {
+                "production": {
+                    "buildTarget": "shop-api:build:production"
+                }
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": [
+                "{options.outputFile}"
+            ],
+            "options": {
+                "lintFilePatterns": [
+                    "apps/shop-api/**/*.ts"
+                ]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+            ],
+            "options": {
+                "jestConfig": "apps/shop-api/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
+        },
+        "docker-build": {
+            "dependsOn": [
+                "build"
+            ],
+            "command": "docker build -f apps/shop-api/Dockerfile --cache-from europe-west6-docker.pkg.dev/foxtrail-ch/apps/shop-api:latest -t shop-api ."
+        }
+    },
+    "tags": []
+}

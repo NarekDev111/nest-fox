@@ -1,0 +1,64 @@
+{
+    "name": "coupon-generator",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/coupon-generator/src",
+    "projectType": "application",
+    "targets": {
+        "build": {
+            "executor": "@nx/webpack:webpack",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "target": "node",
+                "compiler": "tsc",
+                "outputPath": "dist/apps/coupon-generator",
+                "main": "apps/coupon-generator/src/main.ts",
+                "tsConfig": "apps/coupon-generator/tsconfig.app.json",
+                "assets": ["apps/coupon-generator/src/assets"],
+                "isolatedConfig": true,
+                "webpackConfig": "apps/coupon-generator/webpack.config.js"
+            },
+            "configurations": {
+                "development": {},
+                "production": {}
+            }
+        },
+        "serve": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "coupon-generator:build"
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "coupon-generator:build:development"
+                },
+                "production": {
+                    "buildTarget": "coupon-generator:build:production"
+                }
+            }
+        },
+        "lint": {
+            "executor": "@nx/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["apps/coupon-generator/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "apps/coupon-generator/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
+        }
+    },
+    "tags": []
+}

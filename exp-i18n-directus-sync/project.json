@@ -1,0 +1,70 @@
+{
+    "name": "exp-i18n-directus-sync",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/exp-i18n-directus-sync/src",
+    "projectType": "application",
+    "targets": {
+        "build-exp": {
+            "executor": "@nx/webpack:webpack",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "target": "node",
+                "compiler": "tsc",
+                "outputPath": "dist/apps/exp-i18n-directus-sync",
+                "main": "apps/exp-i18n-directus-sync/src/main.ts",
+                "tsConfig": "apps/exp-i18n-directus-sync/tsconfig.app.json",
+                "assets": ["apps/exp-i18n-directus-sync/src/assets"],
+                "isolatedConfig": true,
+                "webpackConfig": "apps/exp-i18n-directus-sync/webpack.config.js"
+            },
+            "configurations": {
+                "development": {},
+                "production": {}
+            },
+            "dependsOn": [
+                {
+                    "projects": "dependencies",
+                    "target": "gen-exp-client"
+                }
+            ]
+        },
+        "serve": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "exp-i18n-directus-sync:build"
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "exp-i18n-directus-sync:build:development"
+                },
+                "production": {
+                    "buildTarget": "exp-i18n-directus-sync:build:production"
+                }
+            }
+        },
+        "lint": {
+            "executor": "@nx/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["apps/exp-i18n-directus-sync/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "apps/exp-i18n-directus-sync/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "configurations": {
+                "ci": {
+                    "ci": true,
+                    "codeCoverage": true
+                }
+            }
+        }
+    },
+    "tags": []
+}
